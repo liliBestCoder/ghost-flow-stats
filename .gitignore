@@ -1,0 +1,8 @@
+/build/
+/out/
+/.vs/
+__pycache__/
+*.gpkg
+*.pem
+*.key
+.keys/

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>流量历史</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./app.js" defer></script>
+</head>
+<body>
+<main>
+    <header class="page-header">
+        <div>
+            <h1>流量历史</h1>
+            <p>Ghost 隧道流量 · 本地历史记录</p>
+        </div>
+        <div class="header-controls">
+            <label class="range">时间范围
+                <select id="range">
+                    <option value="1">今日</option>
+                    <option value="7">最近 7 天</option>
+                    <option value="14" selected>最近 14 天</option>
+                    <option value="30">最近 30 天</option>
+                    <option value="60">最近 60 天</option>
+                    <option value="180">最近半年</option>
+                </select>
+            </label>
+            <output id="collector" class="collector" aria-live="polite">正在读取历史</output>
+        </div>
+    </header>
+
+    <section class="section" aria-labelledby="quota-title">
+        <header class="section-header">
+            <div><h2 id="quota-title">节点月度配额</h2><p id="quota-month" class="section-note">自然月 · 本地记录</p></div>
+            <button id="add-quota" class="button" type="button">设置配额</button>
+        </header>
+        <form id="quota-form" class="panel quota-form" hidden>
+            <label>上游节点<select id="quota-node" required></select></label>
+            <label>每月额度（GB）<input id="quota-limit" type="number" min="0.000001" max="1000000" step="any" required></label>
+            <div class="quota-actions">
+                <button id="save-quota" type="submit" class="button primary">保存</button>
+                <button id="cancel-quota" type="button" class="button">取消</button>
+                <button id="remove-quota" type="button" class="button" hidden>移除额度</button>
+            </div>
+            <p id="quota-feedback" class="section-note" role="status"></p>
+        </form>
+        <div id="quotas" class="pair"></div>
+    </section>
+
+    <section class="section" aria-labelledby="totals-title">
+        <header class="section-header"><h2 id="totals-title">流量总览</h2><span>所选时间范围</span></header>
+        <div class="panel totals" role="group" aria-label="同一刻度下的上传和下载总量">
+            <div class="total-row up">
+                <div><h3>总上传</h3><p id="total-up" class="total">—</p></div>
+                <div class="total-track" aria-hidden="true"><span id="total-bar-up"></span></div>
+                <div class="comparison"><span>较上一周期</span><strong id="change-up">—</strong><small id="previous-up"></small></div>
+            </div>
+            <div class="total-row down">
+                <div><h3>总下载</h3><p id="total-down" class="total">—</p></div>
+                <div class="total-track" aria-hidden="true"><span id="total-bar-down"></span></div>
+                <div class="comparison"><span>较上一周期</span><strong id="change-down">—</strong><small id="previous-down"></small></div>
+            </div>
+        </div>
+    </section>
+    <section class="section" aria-labelledby="heat-title">
+        <header class="section-header"><h2 id="heat-title">日内用量热力图</h2><span>所选范围 · 本地时间</span></header>
+        <article class="panel">
+            <p id="heat-caption" class="section-note"></p>
+            <div class="heat-scroll"><div id="heat-map" class="heat-map" aria-label="按星期和小时汇总的流量"></div></div>
+        </article>
+    </section>
+    <section class="section" aria-labelledby="daily-title">
+        <header class="section-header"><h2 id="daily-title">每日流量</h2><span id="date-range"></span></header>
+        <div class="pair">
+            <article class="panel up"><h3 id="chart-up-title">每日上传</h3><div id="chart-up" class="chart"></div></article>
+            <article class="panel down"><h3 id="chart-down-title">每日下载</h3><div id="chart-down" class="chart"></div></article>
+        </div>
+    </section>
+    <section class="section" aria-labelledby="comparison-title">
+        <header class="section-header"><h2 id="comparison-title">周期用量变化</h2><span id="previous-range"></span></header>
+        <div class="pair">
+            <article class="panel change-panel">
+                <header class="panel-header"><h3>进程用量变化</h3><span>上传 + 下载</span></header>
+                <ol id="process-changes" class="ranking changes"></ol>
+            </article>
+            <article class="panel change-panel">
+                <header class="panel-header"><h3>节点用量变化</h3><span>上传 + 下载</span></header>
+                <ol id="node-changes" class="ranking changes"></ol>
+            </article>
+        </div>
+    </section>
+    <section class="section" aria-labelledby="rank-title">
+        <header class="section-header"><h2 id="rank-title">进程流量排行</h2><span>前 10 名</span></header>
+        <div class="pair">
+            <article class="panel up"><h3>上传排行</h3><ol id="rank-up" class="ranking"></ol></article>
+            <article class="panel down"><h3>下载排行</h3><ol id="rank-down" class="ranking"></ol></article>
+        </div>
+    </section>
+    <section class="section" aria-labelledby="node-title">
+        <header class="section-header"><h2 id="node-title">上游节点排行</h2><span>按上报名称 · 前 10 名</span></header>
+        <div class="pair">
+            <article class="panel up"><h3>节点上传</h3><ol id="node-up" class="ranking"></ol></article>
+            <article class="panel down"><h3>节点下载</h3><ol id="node-down" class="ranking"></ol></article>
+        </div>
+    </section>
+</main>
+</body>
+</html>

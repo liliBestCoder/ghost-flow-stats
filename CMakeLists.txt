@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.15)
+project(ghost_flow_stats LANGUAGES CXX)
+
+add_executable(ghost-flow-stats main.cpp history.cpp loopback_ui.cpp "platform/str_conv.cpp")
+target_compile_features(ghost-flow-stats PRIVATE cxx_std_17)
+target_compile_definitions(ghost-flow-stats PRIVATE NOMINMAX)
+target_include_directories(ghost-flow-stats PRIVATE "platform" "third_party")
+set_property(TARGET ghost-flow-stats PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+if(MSVC)
+    target_compile_options(ghost-flow-stats PRIVATE /W4 /utf-8)
+endif()
+target_link_libraries(ghost-flow-stats PRIVATE bcrypt winsqlite3 winhttp ws2_32)
+
+install(TARGETS ghost-flow-stats RUNTIME DESTINATION .)
+install(FILES manifest.json icon.png dev-public.b64 DESTINATION .)
+install(DIRECTORY ui DESTINATION .)
